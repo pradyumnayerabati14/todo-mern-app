@@ -24,9 +24,10 @@ app.post("/api/tasks",async(req,res)=>{
 
 app.patch("/api/tasks/:id",async(req,res)=>{
     const taskId = req.params.id;
+    const status = req.body.completed;
     const updatedTask = await Task.findByIdAndUpdate(
         taskId,
-        { completed: true },
+        { completed: status},
         { returnDocument: "after" }
         );
 
