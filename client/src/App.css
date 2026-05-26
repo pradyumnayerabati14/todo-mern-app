@@ -217,6 +217,16 @@ form button {
   background-color: green;
 }
 
+.logoutButton{
+    padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  border-color: white;
+  cursor: pointer;
+  color: white;
+  background-color: green;
+}
+
 .deleteBtn{
 padding: 8px 18px;
   font-size: 16px;
@@ -231,4 +241,15 @@ padding: 8px 18px;
   border-radius: 8px;
   border-color: white;
   cursor: pointer;
+}
+
+.signupButton{
+  align-items: flex-end;
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  border-color: white;
+  cursor: pointer;
+  color: white;
+  background-color: green;
 }

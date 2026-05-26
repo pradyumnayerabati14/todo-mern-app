@@ -1,55 +1,28 @@
 import cors from 'cors';
 import express from 'express';
-import mongoose from 'mongoose';
-import Task from "./models/Task.js";
+import connectDB from './config/db.js'
+import taskRouter from './routes/tasksRoutes.js'
+import userRouter from './routes/userRoutes.js'
+import errorMiddleware from './middleware/errorMiddleware.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Routes are mentioned in routes folder
+app.use('/api/tasks',taskRouter)
+app.use('/api/users',userRouter)
 
-app.get("/api/tasks",async (req,res)=>{
-    const tasks = await Task.find();
-    res.status(200).json(tasks);
-})
+//Error middleware
+app.use(errorMiddleware);
 
-app.post("/api/tasks",async(req,res)=>{
-    const newTaskTitle = req.body.title;
-    if(!newTaskTitle){
-        return res.status(400).json({"error":"Invalid Request Body"});
-    }
-    const newTask = await Task.create({ title: newTaskTitle });
-    res.status(201).json(newTask);
-})
+const PORT  = process.env.EXPRESS_PORT || 5001;
 
-app.patch("/api/tasks/:id",async(req,res)=>{
-    const taskId = req.params.id;
-    const status = req.body.completed;
-    const updatedTask = await Task.findByIdAndUpdate(
-        taskId,
-        { completed: status},
-        { returnDocument: "after" }
-        );
-
-    if(!updatedTask){
-        return res.status(404).json({"error":"Task not found"});
-    }
-
-    res.status(200).json(updatedTask);
-})
-
-app.delete("/api/tasks/:id",async(req,res)=>{
-    const taskId = req.params.id; 
-    const deletedTask = await Task.findByIdAndDelete(taskId);
-    if(!deletedTask){
-        return res.status(404).json({"error":"Task not found"});
-    }
-    res.status(200).json({"message":"Task Deleted"});
-})
-
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/myapp").then(()=>{
-        console.log("MongoDB running in localhost:27017");
-        app.listen(5001,()=>{
-            console.log("Express App is running in localhost:5001");
+// DB connection is in config/db/js
+await connectDB(); 
+app.listen(PORT,()=>{
+            console.log(`Express App is running in localhost:${PORT}`);
         });
-})
