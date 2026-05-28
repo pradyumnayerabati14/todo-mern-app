@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: todo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  server:
+    build:
+      context: ./server
+    container_name: todo-server
+    ports:
+      - "5001:5001"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/myapp
+      EXPRESS_PORT: 5001
+      JWT_SECRET: 123456789abcdefghijklmnopqrstuvwxyz
+    depends_on:
+      - mongo
+  client:
+    environment:
+      VITE_API_PROXY_TARGET: http://server:5001
+    build:
+      context: ./client
+    container_name: todo-client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+volumes:
+  mongo-data:
